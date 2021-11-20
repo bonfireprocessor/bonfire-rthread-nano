@@ -1,0 +1,11 @@
+{
+    "name": "rthread-nano",
+    "version" : "0.0.1",
+    "frameworks" : ["bonfire-sdk"],
+    "platforms" : ["Bonfire"],
+    "libArchive": false,
+    "build" : {
+        "flags": [ "-Isrc/risc-v/common"]
+    }
+
+}
