@@ -4,7 +4,7 @@
 
 .extern _start_local
 .extern _stacktop
-.extern trap_handler
+.extern IRQ_Handler
 
 #include "bits.h"
 
@@ -96,10 +96,10 @@ _bonfire_init:
   li x30, 0
   li x31, 0
 
-  la sp, _stacktop
+  la sp, _stacktop -1024 // Leave room for interrupt stack
 
 
-  la a1, __trap
+  la a1, IRQ_Handler
   csrw mtvec,a1
 
   call _start_local
@@ -108,56 +108,3 @@ _bonfire_init:
   j endless
 
 
-__trap:
-csrw mscratch,sp // save SP
-addi sp,sp, -(37*REGBYTES) // allocate space for Trap frame
-save_tf
-mv a0,sp // Pointer to trap frame
-jal riscv_trap_handler
-
-
-
-// a0 points to returned trap frame
-
-LOAD  t1,33*REGBYTES(a0) //  mepc
-csrw mepc,t1
-LOAD  t1,32*REGBYTES(a0)  // mstatus
-csrw mstatus,t1
-
-// The SP of the trapped context will be restored below
-
-# restore x registers
-  LOAD  x1,1*REGBYTES(a0)
-  LOAD  x2,2*REGBYTES(a0)
-  LOAD  x3,3*REGBYTES(a0)
-  LOAD  x4,4*REGBYTES(a0)
-  LOAD  x5,5*REGBYTES(a0)
-  LOAD  x6,6*REGBYTES(a0)
-  LOAD  x7,7*REGBYTES(a0)
-  LOAD  x8,8*REGBYTES(a0)
-  LOAD  x9,9*REGBYTES(a0)
-  LOAD  x11,11*REGBYTES(a0)
-  LOAD  x12,12*REGBYTES(a0)
-  LOAD  x13,13*REGBYTES(a0)
-  LOAD  x14,14*REGBYTES(a0)
-  LOAD  x15,15*REGBYTES(a0)
-  LOAD  x16,16*REGBYTES(a0)
-  LOAD  x17,17*REGBYTES(a0)
-  LOAD  x18,18*REGBYTES(a0)
-  LOAD  x19,19*REGBYTES(a0)
-  LOAD  x20,20*REGBYTES(a0)
-  LOAD  x21,21*REGBYTES(a0)
-  LOAD  x22,22*REGBYTES(a0)
-  LOAD  x23,23*REGBYTES(a0)
-  LOAD  x24,24*REGBYTES(a0)
-  LOAD  x25,25*REGBYTES(a0)
-  LOAD  x26,26*REGBYTES(a0)
-  LOAD  x27,27*REGBYTES(a0)
-  LOAD  x28,28*REGBYTES(a0)
-  LOAD  x29,29*REGBYTES(a0)
-  LOAD  x30,30*REGBYTES(a0)
-  LOAD  x31,31*REGBYTES(a0)
-  # restore a0 last
-  LOAD  x10,10*REGBYTES(a0)
-
-sret

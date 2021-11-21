@@ -11,6 +11,11 @@
 #ifndef RISCV_OPS_H__
 #define RISCV_OPS_H__
 
+#ifdef BONFIRE_SDK
+#pragma message "Incude Bonfire encoding.h"
+#include "encoding.h"
+
+#else
 #if defined(__GNUC__) && !defined(__ASSEMBLER__)
 
 #define read_csr(reg) ({ unsigned long __tmp;                               \
@@ -37,5 +42,7 @@
         asm volatile ("csrrc %0, " #reg ", %1" : "=r"(__tmp) : "r"(bit));   \
             __tmp; })
 #endif /* end of __GNUC__ */
+
+#endif
 
 #endif

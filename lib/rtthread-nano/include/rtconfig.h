@@ -27,7 +27,7 @@
 
 // <o>the stack size of main thread<1-4086>
 //  <i>Default: 512
-#define RT_MAIN_THREAD_STACK_SIZE     256
+#define RT_MAIN_THREAD_STACK_SIZE     4096
 
 // </h>
 
@@ -38,7 +38,7 @@
 // </c>
 // <o>enable components initialization debug configuration<0-1>
 //  <i>Default: 0
-#define RT_DEBUG_INIT 0
+#define RT_DEBUG_INIT 1
 // <c1>thread stack over flow detect
 //  <i> Diable Thread stack over flow detect
 //#define RT_USING_OVERFLOW_CHECK
@@ -112,7 +112,7 @@
 // <h>Console Configuration
 // <c1>Using console
 //  <i>Using console
-//#define RT_USING_CONSOLE
+#define RT_USING_CONSOLE
 // </c>
 // <o>the buffer size of console <1-1024>
 //  <i>the buffer size of console

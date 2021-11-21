@@ -5,21 +5,22 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 2018/10/02     Bernard      The first version
  */
-
+ 
 #include "cpuport.h"
 
-  .section      .text.entry
-  .align 2
-  .global IRQ_Handler
-IRQ_Handler:
+ .section      .text.entry
+  .align 6     /* In ECLIC mode, the trap entry must be 64bytes aligned */
+  .global irq_entry
+irq_entry:
 
     /* save all from thread context */
     addi sp, sp, -32 * REGBYTES
 
     STORE x1,   1 * REGBYTES(sp)
-    
+    li    t0,   0x80
+    STORE t0,   2 * REGBYTES(sp)
+
     STORE x4,   4 * REGBYTES(sp)
     STORE x5,   5 * REGBYTES(sp)
     STORE x6,   6 * REGBYTES(sp)
@@ -49,20 +50,17 @@ IRQ_Handler:
     STORE x30, 30 * REGBYTES(sp)
     STORE x31, 31 * REGBYTES(sp)
 
-    li    t0,   0x80
-    STORE t0,   2 * REGBYTES(sp)
-
     move  s0, sp
 
     /* switch to interrupt stack */
-    la    sp, _stacktop
+    la    sp, _sp
 
     /* interrupt handle */
     call  rt_interrupt_enter
     csrr  a0, mcause
     csrr  a1, mepc
     mv    a2, sp
-    call  SystemIrqHandler
+    csrrw ra, 0x07ED, ra
     call  rt_interrupt_leave
 
     /* switch to from thread stack */
@@ -96,7 +94,7 @@ spurious_interrupt:
     li    t0, 0x00001800
     csrs  mstatus, t0
     LOAD  t0,   2 * REGBYTES(sp)
-    csrs  mstatus, t0 
+    csrs  mstatus, t0
 
     LOAD  x4,   4 * REGBYTES(sp)
     LOAD  x5,   5 * REGBYTES(sp)
