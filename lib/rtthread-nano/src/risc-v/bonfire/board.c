@@ -126,8 +126,8 @@ void rt_hw_console_output(const char *str)
 {
 //#warning "TODO 3: Output the string 'str' through the uart."
    while (*str) {
-       uart_writechar(*str++);
-       if (*str=='\n') uart_writechar('\r');
+     if (*str=='\n') uart_writechar('\r');
+     uart_writechar(*str++);      
    }    
 }
 
