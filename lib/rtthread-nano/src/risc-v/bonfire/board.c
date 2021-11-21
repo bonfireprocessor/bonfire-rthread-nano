@@ -103,6 +103,7 @@ void rt_hw_board_init(void)
 
     /* Call components board initial (use INIT_BOARD_EXPORT()) */
 #ifdef RT_USING_COMPONENTS_INIT
+    printk(" invoking rt_components_board_init\n");
     rt_components_board_init();
 #endif
 

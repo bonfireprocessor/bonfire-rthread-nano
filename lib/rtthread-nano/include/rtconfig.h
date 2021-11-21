@@ -34,7 +34,7 @@
 // <h>Debug Configuration
 // <c1>enable kernel debug configuration
 //  <i>Default: enable kernel debug configuration
-//#define RT_DEBUG
+#define RT_DEBUG
 // </c>
 // <o>enable components initialization debug configuration<0-1>
 //  <i>Default: 0
@@ -123,7 +123,8 @@
 // <h>FinSH Configuration
 // <c1>include finsh config
 //  <i>Select this choice if you using FinSH 
-//#include "finsh_config.h"
+#define RT_USING_FINSH
+#include "finsh_config.h"
 // </c>
 // </h>
 
