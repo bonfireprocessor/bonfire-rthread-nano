@@ -11,6 +11,7 @@
 #include "bonfire.h"
 #include "uart.h"
 #include "console.h"
+#include <reent.h>
 
 
 static volatile uint32_t *pmtime = (uint32_t*)MTIME_BASE; // Pointer to memory mapped RISC-V Timer registers
@@ -76,6 +77,7 @@ static rt_uint8_t rt_heap[RT_HEAP_SIZE];
 
 RT_WEAK void *rt_heap_begin_get(void)
 {
+    printk("rt_heap_begin_get called\n");
     return rt_heap;
 }
 
@@ -84,6 +86,21 @@ RT_WEAK void *rt_heap_end_get(void)
     return rt_heap + RT_HEAP_SIZE;
 }
 #endif
+
+
+static struct rt_mutex malloc_mutex;
+
+// Newlib hooks
+
+void __malloc_lock(struct _reent *r)   {
+
+   //printk("Malloc lock called\n");
+   rt_mutex_take(&malloc_mutex,10);
+};
+void __malloc_unlock(struct _reent *r) {
+    //printk("Malloc unlock called\n");
+    rt_mutex_release(&malloc_mutex);
+};
 
 
 
@@ -110,6 +127,8 @@ void rt_hw_board_init(void)
 #if defined(RT_USING_USER_MAIN) && defined(RT_USING_HEAP)
     rt_system_heap_init(rt_heap_begin_get(), rt_heap_end_get());
 #endif
+
+   rt_mutex_init(&malloc_mutex,"malloc",RT_IPC_FLAG_PRIO);
 }
 
 #ifdef RT_USING_CONSOLE

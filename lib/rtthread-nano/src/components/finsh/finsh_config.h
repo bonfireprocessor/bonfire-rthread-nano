@@ -24,6 +24,10 @@
 //  </c>
 // </h>
 
+#define FINSH_USING_HISTORY
+
+#define FINSH_HISTORY_LINES 5
+
 // <<< end of configuration section >>>
 #endif
 
