@@ -5,7 +5,7 @@
     "platforms" : ["Bonfire"],
     "libArchive": false,
     "build" : {
-        "flags": [ "-Isrc/risc-v/common", "-Isrc/components/finsh"]
+        "flags": [ "-Isrc/risc-v/common", "-Isrc/components/finsh", "-Isrc/risc-v/bonfire"]
     }
 
 }

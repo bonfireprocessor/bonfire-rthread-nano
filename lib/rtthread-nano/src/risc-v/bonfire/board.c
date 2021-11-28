@@ -12,6 +12,8 @@
 #include "uart.h"
 #include "console.h"
 #include <reent.h>
+#include "board.h"
+#include <malloc.h>
 
 
 static volatile uint32_t *pmtime = (uint32_t*)MTIME_BASE; // Pointer to memory mapped RISC-V Timer registers
@@ -68,38 +70,53 @@ void SystemIrqHandler(uint32_t mcause,uint32_t mepc,void *trapframe)
 
 
 #if defined(RT_USING_USER_MAIN) && defined(RT_USING_HEAP)
-/*
- * Please modify RT_HEAP_SIZE if you enable RT_USING_HEAP
- * the RT_HEAP_SIZE max value = (sram size - ZI size), 1024 means 1024 bytes
- */
-#define RT_HEAP_SIZE (15*1024)
-static rt_uint8_t rt_heap[RT_HEAP_SIZE];
+
+static void * rt_heap = NULL;
 
 RT_WEAK void *rt_heap_begin_get(void)
 {
+    if (!rt_heap) rt_heap = malloc(RT_HEAP_SIZE);
+    RT_ASSERT(rt_heap!=NULL);
     printk("rt_heap_begin_get called\n");
+
     return rt_heap;
 }
 
 RT_WEAK void *rt_heap_end_get(void)
-{
+{   RT_ASSERT(rt_heap!=NULL);
     return rt_heap + RT_HEAP_SIZE;
 }
 #endif
 
-
+#ifdef RT_USING_MUTEX
 static struct rt_mutex malloc_mutex;
+#endif
 
 // Newlib hooks
+
+// If Mutexes are enabled (RT_USING_MUTEX defined) and Scheduler is started (rt_thread_self() !=NULL) malloc_lock/unlock will 
+// use a mutex. Otherwise it will use a critical section
 
 void __malloc_lock(struct _reent *r)   {
 
    //printk("Malloc lock called\n");
-   rt_mutex_take(&malloc_mutex,10);
+   #ifdef RT_USING_MUTEX
+   if (rt_thread_self())
+     rt_mutex_take(&malloc_mutex,10);
+   else 
+   #endif
+     rt_enter_critical();  
 };
+
+
 void __malloc_unlock(struct _reent *r) {
     //printk("Malloc unlock called\n");
-    rt_mutex_release(&malloc_mutex);
+    #ifdef RT_USING_MUTEX
+    if (rt_thread_self())
+      rt_mutex_release(&malloc_mutex);
+    else
+    #endif
+      rt_exit_critical(); 
 };
 
 
@@ -128,8 +145,21 @@ void rt_hw_board_init(void)
     rt_system_heap_init(rt_heap_begin_get(), rt_heap_end_get());
 #endif
 
+   #ifdef RT_USING_MUTEX
    rt_mutex_init(&malloc_mutex,"malloc",RT_IPC_FLAG_PRIO);
+   #endif 
 }
+
+
+void rt_hw_cpu_shutdown()
+{
+     clear_csr(mie,MIP_MTIP); // Disable Timer Interrupt
+     rt_hw_interrupt_disable();
+
+     void (*sram_base)() = (void*)SRAM_BASE;
+     sram_base();
+}
+
 
 #ifdef RT_USING_CONSOLE
 
