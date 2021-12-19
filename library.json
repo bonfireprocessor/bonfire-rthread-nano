@@ -1,5 +1,5 @@
 {
-    "name": "rthread-nano",
+    "name": "bonfire-rthread-nano",
     "version" : "0.0.1",
     "frameworks" : ["bonfire-sdk"],
     "platforms" : ["Bonfire"],
