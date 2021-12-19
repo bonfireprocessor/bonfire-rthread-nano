@@ -1,5 +1,11 @@
 /* Bonfire Board specific configuration */
-
+/*
+ * Copyright (c) 2021 Thomas Hornschuh
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ 
+ */
 
 #ifndef __BOARD_H__
 #define __BOARD_H__

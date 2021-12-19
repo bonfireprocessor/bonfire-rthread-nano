@@ -6,6 +6,7 @@
  * Change Logs:
  * Date           Author       Notes
  * 2018/10/02     Bernard      The first version
+ * 2021/11        Thomas Hornschuh Small fix
  */
 
 #include "cpuport.h"

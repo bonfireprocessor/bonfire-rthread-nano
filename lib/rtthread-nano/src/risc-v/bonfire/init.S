@@ -1,3 +1,11 @@
+/*
+ * Copyright (c) 2021 Thomas Hornschuh
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ 
+ */
+
 .section .init
 .global _bonfire_init
 
