@@ -122,7 +122,7 @@ void __malloc_unlock(struct _reent *r) {
 
 
 /**
- * This function will initial your board.
+ * This function will init your board.
  */
 void rt_hw_board_init(void)
 {
@@ -171,9 +171,10 @@ static int uart_init(void)
 }
 INIT_BOARD_EXPORT(uart_init);
 
+
 void rt_hw_console_output(const char *str)
 {
-//#warning "TODO 3: Output the string 'str' through the uart."
+// Output the string 'str' through the uart."
    while (*str) {
      if (*str=='\n') uart_writechar('\r');
      uart_writechar(*str++);      
