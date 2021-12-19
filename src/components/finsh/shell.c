@@ -508,7 +508,7 @@ void finsh_thread_entry(void *parameter)
 {
     int ch;
 
-    rt_kprintf("finsh_thread_entry\n");
+    //rt_kprintf("finsh_thread_entry\n");
     /* normal is echo mode */
 #ifndef FINSH_ECHO_DISABLE_DEFAULT
     shell->echo_mode = 1;
@@ -824,7 +824,7 @@ int finsh_system_init(void)
     rt_err_t result = RT_EOK;
     rt_thread_t tid;
 
-    rt_kprintf(" in finsh_system_init\n");
+    //rt_kprintf(" in finsh_system_init\n");
 
 #ifdef FINSH_USING_SYMTAB
 #if defined(__CC_ARM) || defined(__CLANG_ARM)          /* ARM C Compiler */

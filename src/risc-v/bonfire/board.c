@@ -10,7 +10,6 @@
 #include <rtthread.h>
 #include "bonfire.h"
 #include "uart.h"
-#include "console.h"
 #include <reent.h>
 #include "board.h"
 #include <malloc.h>
@@ -26,7 +25,7 @@ static uint32_t mtime_setinterval(uint32_t interval)
 
    tick_interval=interval;
 
-   printk("Set tick interval to %ld\n",interval);
+   BOARD_DEBUG("Set tick interval to %ld\n",interval);
 
    if (interval >0) {
      pmtime[2]=pmtime[0]+interval;
@@ -53,15 +52,15 @@ void SystemIrqHandler(uint32_t mcause,uint32_t mepc,void *trapframe)
        // interrupt
        switch (mcause & 0x0ff) {
          case 0x07:
-           //printk("Timer irq @%ld\n",pmtime[0]);
+           //BOARD_DEBUG("Timer irq @%ld\n",pmtime[0]);
            pmtime[2]=pmtime[0]+tick_interval;  // Will as side effect clear the pending irq
            rt_os_tick_callback();
            break;
         default:
-          printk("Unexpeced interupt %lx\n",mcause);    
+          BOARD_DEBUG("Unexpeced interupt %lx\n",mcause);    
        }  
     }  else {
-        printk("Trap Exception %lx at %lx\n",mcause,mepc);
+        BOARD_DEBUG("Trap Exception %lx at %lx\n",mcause,mepc);
         uart_readchar();        
         rt_hw_cpu_shutdown();
     }
@@ -77,7 +76,7 @@ RT_WEAK void *rt_heap_begin_get(void)
 {
     if (!rt_heap) rt_heap = malloc(RT_HEAP_SIZE);
     RT_ASSERT(rt_heap!=NULL);
-    printk("rt_heap_begin_get called\n");
+    BOARD_DEBUG("Allocated rt_heap at %lx, size %ld\n",rt_heap,RT_HEAP_SIZE);
 
     return rt_heap;
 }
@@ -99,7 +98,7 @@ static struct rt_mutex malloc_mutex;
 
 void __malloc_lock(struct _reent *r)   {
 
-   //printk("Malloc lock called\n");
+   //BOARD_DEBUG("Malloc lock called\n");
    #ifdef RT_USING_MUTEX
    if (rt_thread_self())
      rt_mutex_take(&malloc_mutex,10);
@@ -110,7 +109,7 @@ void __malloc_lock(struct _reent *r)   {
 
 
 void __malloc_unlock(struct _reent *r) {
-    //printk("Malloc unlock called\n");
+    //BOARD_DEBUG("Malloc unlock called\n");
     #ifdef RT_USING_MUTEX
     if (rt_thread_self())
       rt_mutex_release(&malloc_mutex);
@@ -137,7 +136,7 @@ void rt_hw_board_init(void)
 
     /* Call components board initial (use INIT_BOARD_EXPORT()) */
 #ifdef RT_USING_COMPONENTS_INIT
-    printk(" invoking rt_components_board_init\n");
+    BOARD_DEBUG("invoking rt_components_board_init\n");
     rt_components_board_init();
 #endif
 
