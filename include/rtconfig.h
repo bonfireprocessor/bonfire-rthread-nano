@@ -58,7 +58,7 @@
 
 // <e>Software timers Configuration
 // <i> Enables user timers
-#define RT_USING_TIMER_SOFT         0
+#define RT_USING_TIMER_SOFT         1
 #if RT_USING_TIMER_SOFT == 0
     #undef RT_USING_TIMER_SOFT
 #endif
@@ -67,7 +67,7 @@
 #define RT_TIMER_THREAD_PRIO        4
 // <o>The stack size of timer thread <0-8192>
 //  <i>Default: 512
-#define RT_TIMER_THREAD_STACK_SIZE  512
+#define RT_TIMER_THREAD_STACK_SIZE  2048
 // </e>
 
 // <h>IPC(Inter-process communication) Configuration
@@ -102,6 +102,7 @@
 //  <i>Dynamic Heap Management
 #define RT_USING_HEAP
 #define RT_USING_SMALL_MEM
+#define RT_USING_MEMTRACE
 // </c>
 // <c1>using tiny size of memory
 //  <i>using tiny size of memory
